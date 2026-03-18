@@ -1,0 +1,339 @@
+﻿openapi: "3.1.0"
+info:
+  title: Fitness Tracker Workout API
+  version: "1.0.0"
+  description: |
+    A contract-first REST API for tracking workout sessions.
+    Users can create, view, update, delete, and summarize workouts.
+  contact:
+    name: Pradeep Kumar Senthil Kumar
+    email: pradeeplumar.pk002@gmail.com
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+tags:
+  - name: Workouts
+    description: Operations for managing workout records
+
+paths:
+  /:
+    get:
+      tags: [Workouts]
+      summary: List all workouts
+      description: Returns all workouts in the fitness tracker.
+      operationId: WorkoutService_list
+      responses:
+        "200":
+          description: A list of workouts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Workout"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      tags: [Workouts]
+      summary: Create a workout
+      description: Creates a new workout entry.
+      operationId: WorkoutService_create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkoutCreate"
+      responses:
+        "201":
+          description: Workout created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workout"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /{id}:
+    get:
+      tags: [Workouts]
+      summary: Get a workout by ID
+      description: Retrieves one workout using its unique ID.
+      operationId: WorkoutService_getById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique workout ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workout found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workout"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Workout not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      tags: [Workouts]
+      summary: Update a workout
+      description: Partially updates a workout by ID.
+      operationId: WorkoutService_update
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique workout ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkoutUpdate"
+      responses:
+        "200":
+          description: Workout updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workout"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Workout not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      tags: [Workouts]
+      summary: Delete a workout
+      description: Deletes a workout by ID.
+      operationId: WorkoutService_delete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique workout ID
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Workout deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workout"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Workout not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /weekly-summary:
+    get:
+      tags: [Workouts]
+      summary: Get weekly workout summary
+      description: Returns aggregated workout statistics for all workouts currently stored.
+      operationId: WorkoutService_weeklySummary
+      responses:
+        "200":
+          description: Weekly summary returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WeeklySummary"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    Workout:
+      type: object
+      description: A recorded workout session.
+      required:
+        - id
+        - type
+        - durationMinutes
+        - caloriesBurned
+        - date
+        - intensity
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the workout.
+          readOnly: true
+        type:
+          type: string
+          description: Type of workout.
+          enum: [cardio, strength, yoga, hiit, mobility]
+        durationMinutes:
+          type: integer
+          format: int32
+          description: Duration of the workout in minutes.
+        caloriesBurned:
+          type: number
+          description: Estimated calories burned.
+        date:
+          type: string
+          format: date
+          description: Date of the workout.
+        intensity:
+          type: string
+          description: Intensity level of the workout.
+          enum: [low, medium, high]
+        notes:
+          type: string
+          description: Optional notes about the workout.
+      example:
+        id: wk_001
+        type: cardio
+        durationMinutes: 45
+        caloriesBurned: 320
+        date: 2026-03-15
+        intensity: medium
+        notes: Morning treadmill run
+
+    WorkoutCreate:
+      type: object
+      description: Input schema for creating a workout.
+      required:
+        - type
+        - durationMinutes
+        - caloriesBurned
+        - date
+        - intensity
+      properties:
+        type:
+          type: string
+          description: Type of workout.
+          enum: [cardio, strength, yoga, hiit, mobility]
+        durationMinutes:
+          type: integer
+          format: int32
+          description: Duration of the workout in minutes.
+        caloriesBurned:
+          type: number
+          description: Estimated calories burned.
+        date:
+          type: string
+          format: date
+          description: Date of the workout.
+        intensity:
+          type: string
+          description: Intensity level of the workout.
+          enum: [low, medium, high]
+        notes:
+          type: string
+          description: Optional notes about the workout.
+
+    WorkoutUpdate:
+      type: object
+      description: Input schema for partially updating a workout.
+      properties:
+        type:
+          type: string
+          description: Type of workout.
+          enum: [cardio, strength, yoga, hiit, mobility]
+        durationMinutes:
+          type: integer
+          format: int32
+          description: Duration of the workout in minutes.
+        caloriesBurned:
+          type: number
+          description: Estimated calories burned.
+        date:
+          type: string
+          format: date
+          description: Date of the workout.
+        intensity:
+          type: string
+          description: Intensity level of the workout.
+          enum: [low, medium, high]
+        notes:
+          type: string
+          description: Optional notes about the workout.
+
+    WorkoutTypeBreakdown:
+      type: object
+      description: Count of workouts by workout type.
+      properties:
+        type:
+          type: string
+          description: Workout type.
+          enum: [cardio, strength, yoga, hiit, mobility]
+        count:
+          type: integer
+          description: Number of workouts of this type.
+
+    WeeklySummary:
+      type: object
+      description: Aggregated workout summary.
+      properties:
+        totalWorkouts:
+          type: integer
+          description: Total number of workouts.
+        totalDurationMinutes:
+          type: integer
+          description: Total workout duration in minutes.
+        totalCaloriesBurned:
+          type: number
+          description: Total calories burned across workouts.
+        averageDurationMinutes:
+          type: number
+          description: Average workout duration in minutes.
+        workoutsByType:
+          type: array
+          description: Breakdown of workouts by type.
+          items:
+            $ref: "#/components/schemas/WorkoutTypeBreakdown"
+
+    ErrorResponse:
+      type: object
+      description: Error response returned when a request fails.
+      properties:
+        error:
+          type: string
+          description: Error message

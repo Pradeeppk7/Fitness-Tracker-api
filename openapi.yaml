@@ -12,6 +12,8 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local development server
+  - url: https://fitness-tracker-api-m95n.onrender.com
+    description: Production server on Render
 
 tags:
   - name: Workouts

@@ -50,5 +50,15 @@ You can also retrieve the OpenAPI definition at:
 - YAML: `http://localhost:3000/openapi.yaml`
 - JSON: `http://localhost:3000/openapi.json`
 
+### Deployed API Documentation
+The API is deployed on Render. Access the Swagger UI documentation at:
+```
+https://fitness-tracker-api-m95n.onrender.com/docs
+```
+
+You can also retrieve the OpenAPI definition at:
+- YAML: `https://fitness-tracker-api-m95n.onrender.com/openapi.yaml`
+- JSON: `https://fitness-tracker-api-m95n.onrender.com/openapi.json`
+
 ## Contact
 For questions or support, contact: pradeeplumar.pk002@gmail.com
